@@ -2,14 +2,13 @@ package com.example.myapplication.ui.home.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,8 +31,8 @@ import com.example.myapplication.utils.K
 @Composable
 fun MovieCoverImage(
     modifier: Modifier = Modifier,
-    movie: Movie ,
-    onMovieClick:(Int)-> Unit
+    movie: Movie,
+    onMovieClick: (Int) -> Unit
 
 ) {
     val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -41,46 +40,53 @@ fun MovieCoverImage(
         .crossfade(true)
         .build()
 
-    Box(modifier = modifier
-        .size(width = 150.dp , height = 250.dp )
-        .padding(itemSpacing)
-        .clickable{onMovieClick(movie.id)}) {
-       AsyncImage(
-           model = imageRequest ,
-           contentDescription = null ,
-           modifier = Modifier.matchParentSize()
-               .clip(MaterialTheme.shapes.medium )
-               .shadow(elevation = 4.dp),
-               contentScale = ContentScale.Crop
-       )
-        MovieCard (
+    Box(
+        modifier = modifier
+            .size(width = 150.dp, height = 250.dp)
+            .padding(itemSpacing)
+            .clickable { onMovieClick(movie.id) }) {
+        AsyncImage(
+            model = imageRequest,
+            contentDescription = null,
+            modifier = Modifier
+                .matchParentSize()
+                .clip(MaterialTheme.shapes.medium)
+                .shadow(elevation = 4.dp),
+            contentScale = ContentScale.Crop
+        )
+        MovieCard(
             shapes = CircleShape,
             modifier = Modifier
-                .align (Alignment.TopEnd )
+                .align(Alignment.TopEnd)
                 .padding(4.dp)
-        ){
+        ) {
             Icon(
-                imageVector = Icons.Default.Bookmark ,
-                contentDescription = "Bookmark" ,
+                imageVector = Icons.Default.BookmarkAdd,
+                contentDescription = "Bookmark",
                 modifier = Modifier.padding(4.dp)
             )
         }
-        Surface(modifier = Modifier
-            .align(Alignment.BottomStart)
-            .fillMaxWidth(),
-            color =Color.Black.copy(alpha = .8f) ,
-            contentColor = Color.White ,
+        Surface(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth(),
+            color = Color.Black.copy(alpha = .8f),
+            contentColor = Color.White,
             shape = RoundedCornerShape(
                 bottomEnd = 30.dp,
                 bottomStart = 30.dp
-            )) {
+            )
+        ) {
 
-            Box(contentAlignment = Alignment.Center ,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(2.dp)){
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(2.dp)
+            ) {
                 Text(
-                    text = movie.title ,
-                    style = MaterialTheme.typography.titleMedium ,
+                    text = movie.title,
+                    style = MaterialTheme.typography.titleMedium,
                     maxLines = 1
 
                 )
@@ -88,6 +94,8 @@ fun MovieCoverImage(
         }
 
 
-
     }
 }
+
+
+

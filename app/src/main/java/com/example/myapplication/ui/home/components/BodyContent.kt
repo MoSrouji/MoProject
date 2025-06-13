@@ -3,7 +3,6 @@ package com.example.myapplication.ui.home.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,10 +24,13 @@ import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.ui.home.itemSpacing
 
 @Composable
-fun BodyContent(modifier: Modifier = Modifier ,
-                discoverMovies: List<Movie> ,
-                trendingMovies: List<Movie> ,
-                onMovieClick:(id: Int) -> Unit) {
+fun BodyContent(modifier: Modifier = Modifier,
+                discoverMovies: List<Movie>,
+                trendingMovies: List<Movie>,
+                onMovieClick:(id: Int) -> Unit,
+                onDiscoverArrowClick:() ->Unit,
+                onTradingArrowClick:()->Unit
+              ) {
     LazyColumn (modifier = modifier) {
         item {
         Card(modifier= Modifier.fillMaxWidth()){
@@ -43,7 +45,7 @@ fun BodyContent(modifier: Modifier = Modifier ,
                         style = MaterialTheme.typography.titleLarge ,
                         fontWeight = FontWeight.Bold,
                     )
-                    IconButton(onClick = {TODO()}) {
+                    IconButton(onClick = onDiscoverArrowClick){
 
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward ,
@@ -71,7 +73,7 @@ fun BodyContent(modifier: Modifier = Modifier ,
                         style = MaterialTheme.typography.titleLarge ,
                         fontWeight = FontWeight.Bold,
                     )
-                    IconButton(onClick = {TODO()}) {
+                    IconButton(onClick = onTradingArrowClick) {
 
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward ,

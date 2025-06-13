@@ -37,15 +37,40 @@ class MovieDetailMapperImpl: ApiMapper<MovieDetail, MovieDetailDto> {
           runtime = convertMinutesToHours(apiDto.runtime ?:0)
       )
     }
-    private fun formatTimeStamp(pattern: String ="dd.MM.yy",time: String): String{
-        val inputDataFormatter=SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val outputDateFormatter=SimpleDateFormat(
-            pattern, Locale.getDefault())
-        val date = inputDataFormatter.parse(time)
+//    private fun formatTimeStamp(pattern: String ="dd.MM.yy",time: String): String{
+//        val inputDataFormatter=SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+//        val outputDateFormatter=SimpleDateFormat(
+//            pattern, Locale.getDefault())
+//        val date = inputDataFormatter.parse(time)
+//
+//        val formattedDate = date?.let { outputDateFormatter.format(it) }?:time
+//        return formattedDate
+//
+//    }
+    private fun formatTimeStamp(pattern: String = "dd.MM.yy", time: String): String {
+        // List of possible input date formats
+        val potentialFormats = listOf(
+            "yyyy-MM-dd", // Format for dates like "2025-05-17"
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", // Full ISO 8601 format with milliseconds
+            "yyyy-MM-dd'T'HH:mm:ss'Z'" // ISO 8601 format without milliseconds
+        )
 
-        val formattedDate = date?.let { outputDateFormatter.format(it) }?:time
-        return formattedDate
-
+        val outputDateFormatter = SimpleDateFormat(pattern, Locale.getDefault())
+        for (inputFormat in potentialFormats) {
+            try {
+                // Attempt to parse the date using the current input format
+                val inputDataFormatter = SimpleDateFormat(inputFormat, Locale.getDefault())
+                val date = inputDataFormatter.parse(time)
+                date?.let {
+                    // Successfully parsed, return the formatted output
+                    return outputDateFormatter.format(it)
+                }
+            } catch (e: Exception) {
+                // Ignore and try the next format
+            }
+        }
+        // If no format succeeds, return the input string as-is
+        return time
     }
 
     private fun convertMinutesToHours(minutes: Int): String {

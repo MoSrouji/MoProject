@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -38,8 +36,9 @@ val itemSpacing = 8.dp
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier, homeViewModel: HomeViewModel = hiltViewModel(),
-    onMovieClick: (id: Int) -> Unit
-
+    onMovieClick: (id: Int) -> Unit,
+    onDiscoverArrowClick: () -> Unit,
+    onTradingArrowClick: () -> Unit
 ) {
     var isAutoScrolling by remember {
         mutableStateOf(true)
@@ -116,14 +115,17 @@ fun HomeScreen(
 
                     }
 
+
                     BodyContent(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .heightIn(max = bodyItemHeight),
                         discoverMovies = state.discoverMovies,
                         trendingMovies = state.trendingMovies,
-                        onMovieClick = onMovieClick
-                    )
+                        onMovieClick = onMovieClick ,
+                        onTradingArrowClick = onTradingArrowClick,
+                        onDiscoverArrowClick = onDiscoverArrowClick
+                        )
 
                 }
             }
