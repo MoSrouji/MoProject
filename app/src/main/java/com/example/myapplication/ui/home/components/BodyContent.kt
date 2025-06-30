@@ -29,7 +29,7 @@ fun BodyContent(modifier: Modifier = Modifier,
                 trendingMovies: List<Movie>,
                 onMovieClick:(id: Int) -> Unit,
                 onDiscoverArrowClick:() ->Unit,
-                onTradingArrowClick:()->Unit
+                onTradingArrowClick:()->Unit ,
               ) {
     LazyColumn (modifier = modifier) {
         item {
@@ -57,8 +57,10 @@ fun BodyContent(modifier: Modifier = Modifier,
 
                 LazyRow(modifier = Modifier.padding(horizontal = itemSpacing)) {
                     items (discoverMovies) {
-                        MovieCoverImage(movie = it ,
-                            onMovieClick =onMovieClick ,)
+                        MovieCoverImage(
+                            movie = it ,
+                            onMovieClick =onMovieClick ,
+                         )
                     }
                 }
 
@@ -85,8 +87,10 @@ fun BodyContent(modifier: Modifier = Modifier,
 
                 LazyRow(modifier = Modifier.padding(horizontal = itemSpacing)) {
                     items (trendingMovies) {
-                        MovieCoverImage(movie = it ,
-                            onMovieClick =onMovieClick ,)
+                        MovieCoverImage(
+                            movie = it ,
+                            onMovieClick =onMovieClick )
+
                     }
                 }
 

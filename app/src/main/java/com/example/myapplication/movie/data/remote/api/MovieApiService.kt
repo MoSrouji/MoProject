@@ -3,6 +3,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.movie.data.remote.models.MovieDto
 import retrofit2.http.GET
 import com.example.myapplication.utils.K
+import com.google.android.gms.common.api.internal.ApiKey
 import retrofit2.http.Query
 
 interface MovieApiService {
@@ -18,6 +19,12 @@ suspend fun fetchTrendingMovie(
     @Query("api_key") apiKey: String = BuildConfig.apiKey ,
     @Query("include_adult") includeAdult: Boolean = false
 ): MovieDto
-
+@GET(K.SEARCH_ENDPOINT)
+suspend fun searchMovie(
+    @Query("api_key") apiKey: String = BuildConfig.apiKey ,
+    @Query("include_adult") includeAdult: Boolean =false ,
+    @Query("query") query: String ,
+    @Query("primary_release_year") primaryReleaseYear : String,
+): MovieDto
 
 }

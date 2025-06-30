@@ -1,5 +1,6 @@
 package com.example.myapplication.movie.data.repository_impl
 
+import androidx.compose.ui.graphics.RectangleShape
 import com.example.myapplication.common.data.ApiMapper
 import com.example.myapplication.movie.data.remote.api.MovieApiService
 import com.example.myapplication.movie.data.remote.models.MovieDto
@@ -36,5 +37,19 @@ class MovieRepositoryImpl(
     }.catch { e->
         emit(Response.Error(e))
 
+    }
+
+    override suspend fun searchMovie(movieName: String ,releaseDate: String  ): Flow<Response<List<Movie>>> =flow{
+        emit(Response.Loading())
+        val movieDto = movieApiService.searchMovie(
+            query = movieName ,
+            primaryReleaseYear = releaseDate
+        )
+        apiMapper.mapToDomain(movieDto).apply {
+            emit(Response.Success(this))
+        }
+
+    }.catch {e->
+        emit(Response.Error(e))
     }
 }

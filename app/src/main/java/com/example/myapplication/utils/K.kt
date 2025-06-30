@@ -7,6 +7,7 @@ object K {
     const val MOVIE_DETAIL_ENDPOINT ="movie"
     const val MOVIE_ACTOR_ENDPOINT ="person"
     const val TRENDING_MOVIE_ENDPOINT ="trending/movie/week"
+    const val SEARCH_ENDPOINT ="search/movie"
     const val MOVIE_ID ="id"
     const val ACTOR_ID ="id"
 }

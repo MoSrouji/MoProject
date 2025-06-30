@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +33,7 @@ import com.example.myapplication.utils.K
 fun MovieCoverImage(
     modifier: Modifier = Modifier,
     movie: Movie,
-    onMovieClick: (Int) -> Unit
+    onMovieClick: (Int) -> Unit,
 
 ) {
     val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -60,11 +61,14 @@ fun MovieCoverImage(
                 .align(Alignment.TopEnd)
                 .padding(4.dp)
         ) {
+            IconButton(
+               onClick = {}
+            ) {
             Icon(
                 imageVector = Icons.Default.BookmarkAdd,
                 contentDescription = "Bookmark",
                 modifier = Modifier.padding(4.dp)
-            )
+            )}
         }
         Surface(
             modifier = Modifier

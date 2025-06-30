@@ -3,55 +3,58 @@ package com.example.myapplication
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.ui.home.defaultPadding
-import com.example.myapplication.ui.navigation.LunchMovieApp
+import com.example.myapplication.route.LunchMovieApp
+import com.example.myapplication.ui.splash.SplashViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.google.firebase.FirebaseApp
 import dagger.hilt.android.AndroidEntryPoint
+
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val splashViewModel : SplashViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            MyApplicationTheme {
-                Column {
-                    App()
-                }
+
+
+        if (FirebaseApp.getApps(this).isEmpty()) {
+            FirebaseApp.initializeApp(this)
+        }
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                splashViewModel.isLoading.value
             }
         }
+        setContent {
+                        MovieApp()
+
+       }
     }
+
 }
 
 @Composable
-fun App() {
-    val navController = rememberNavController()
+fun MovieApp() {
+    MyApplicationTheme {
+        // Use Surface as the root container for proper theming
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            val navController = rememberNavController()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LunchMovieApp(navController = navController, modifier = Modifier.padding(it))
-        Spacer(modifier = Modifier.padding(defaultPadding))
-
+                LunchMovieApp(
+                    navController = navController,
+                )
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-

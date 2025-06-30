@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -17,9 +18,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.WatchLater
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -54,6 +56,9 @@ fun DetailBodyContent(
     fetchMovies: () -> Unit,
     onMovieClick: (Int) -> Unit,
     onActorClick: (Int) -> Unit,
+    onBookMarkClick:()-> Unit,
+    onWatchedClick:()-> Unit,
+    loading: Boolean
 ) {
     LazyColumn(
         modifier = modifier
@@ -119,8 +124,21 @@ fun DetailBodyContent(
 
 
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
+                        SaveWatchButton(
+                            onClick = onBookMarkClick,
+                            loading = loading,
+                            bgColor = Color.Black.copy(.5f) ,
+                            icon = Icons.Default.BookmarkAdd
+                        )
+                        SaveWatchButton(
+                            onClick = onWatchedClick,
+                            loading = loading,
+                            bgColor = Color.Black.copy(.5f),
+                            icon = Icons.Default.WatchLater
+                        )
                         ActionIcon.entries.forEachIndexed { index, actionIcon ->
                             ActionIconBtn(
                                 icon = actionIcon.icon,
@@ -133,6 +151,7 @@ fun DetailBodyContent(
                             )
 
                         }
+
 
 
                     }
@@ -204,7 +223,7 @@ fun DetailBodyContent(
                         fetchMovies = fetchMovies,
                         isMovieLoading = isMovieLoading,
                         movies = movies ,
-                        onMovieClick = onMovieClick
+                        onMovieClick = onMovieClick ,
                     )
                 }
 
@@ -214,10 +233,11 @@ fun DetailBodyContent(
     }
 }
 
-private enum class ActionIcon(val icon: ImageVector, val contentDescription: String) {
-    BookMark(icon = Icons.Default.Bookmark, contentDescription = "Bookmark"),
-    Share(icon = Icons.Default.Share, contentDescription = "Share"),
-    Download(icon = Icons.Default.Download, contentDescription = "Download"),
+private enum class ActionIcon(val icon: ImageVector, val contentDescription: String  ) {
+
+    Share(icon = Icons.Default.Share, contentDescription = "Share" ),
+    Download(icon = Icons.Default.Download, contentDescription = "Download")
+
 }
 
 @Composable
@@ -225,23 +245,24 @@ private fun ActionIconBtn(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     contentDescription: String? = null,
-    bgColor: Color = Color.Black.copy(.8f)
+    bgColor: Color = Color.Black.copy(.8f) ,
 ) {
     MovieCard(
         shapes = CircleShape,
         modifier = modifier
             .padding(4.dp),
         bgColor = bgColor
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            modifier = Modifier.padding(4.dp)
-        )
+    ){
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.padding(4.dp)
+            )
+        }
 
 
     }
-}
+
 
 
 @Composable
@@ -265,6 +286,48 @@ private fun MovieInfoItem(infoItem: List<String>, title: String) {
         }
     }
 }
+
+@Composable
+private fun SaveWatchButton(
+    onClick: () -> Unit,
+    loading: Boolean,
+    modifier: Modifier = Modifier,
+    bgColor: Color = Color.Black.copy(.8f) ,
+    icon: ImageVector
+
+
+    ){
+    MovieCard(
+        shapes = CircleShape,
+        modifier = modifier
+            .padding(4.dp).size(35.dp),
+        bgColor = bgColor
+    ){
+if (loading){
+    CircularProgressIndicator(modifier = Modifier.size(20.dp))
+
+}else{
+    IconButton(
+        onClick = onClick
+    ) {
+        Icon(
+            imageVector = icon ,
+            contentDescription = "Save To Watch Later" ,
+            modifier = Modifier.padding(4.dp)
+
+        )
+
+    }
+}
+    }
+
+
+    }
+
+
+
+
+
 
 
 @Composable
@@ -304,7 +367,7 @@ fun MoreLikeThis(
     fetchMovies: () -> Unit,
     isMovieLoading: Boolean,
     movies: List<Movie>,
-    onMovieClick: (Int) -> Unit
+    onMovieClick: (Int) -> Unit ,
 ) {
 
     LaunchedEffect(key1 = true) {
@@ -331,7 +394,7 @@ fun MoreLikeThis(
             items(
                 movies
             ) {
-                MovieCoverImage(movie = it, onMovieClick = onMovieClick)
+                MovieCoverImage(movie = it, onMovieClick = onMovieClick )
             }
         }
 

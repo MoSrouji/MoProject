@@ -6,6 +6,8 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.51.1"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
     kotlin("kapt")
+    alias(libs.plugins.google.gms.google.services)
+    // alias(libs.plugins.google.gms.google.services)
 
 }
 
@@ -52,13 +54,19 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.storage.ktx)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -100,7 +108,11 @@ dependencies {
     implementation(libs.androidx.ui.util)
     implementation(libs.androidx.core.splashscreen)
 
-
+    implementation(libs.accompanist.navigation.animation)
+    implementation(libs.androidx.animation.android)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 }
 
 

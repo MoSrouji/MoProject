@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+
+        <item name="postSplashScreenTheme">@style/Theme.MyApplication</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcherd_foreground</item>
+
+        <item name="windowSplashScreenBackground">@color/Gunmetal</item>
+    </style>
+</resources>

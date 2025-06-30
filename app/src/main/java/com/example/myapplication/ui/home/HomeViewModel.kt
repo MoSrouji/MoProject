@@ -14,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val repository: MovieRepository ,
+
 ): ViewModel() {
 
     private val _homeState = MutableStateFlow(HomeState())
@@ -27,6 +28,8 @@ class HomeViewModel @Inject constructor(
     init {
         fetchTrendingMovies()
     }
+
+
 
     private fun fetchDiscoverMovies() =viewModelScope.launch {
         repository.fetchDiscoverMovie().collectAndHandle(
@@ -84,9 +87,10 @@ class HomeViewModel @Inject constructor(
 }
 
 data class HomeState(
+    val searchMovies: List<Movie> = emptyList(),
     val discoverMovies: List<Movie> = emptyList(),
     val trendingMovies: List<Movie> = emptyList(),
-    val error: String? = null ,
+    val error: String? = null,
     val isLoading: Boolean = false
 
 )

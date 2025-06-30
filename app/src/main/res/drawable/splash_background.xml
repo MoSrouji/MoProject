@@ -1,0 +1,11 @@
+<!-- res/drawable/splash_background.xml -->
+<layer-list xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/Gunmetal"/>
+    <item android:gravity="center">
+        <bitmap android:src="@drawable/ic_launcherd_foreground"
+            android:gravity="center"
+            />
+    </item>
+
+</layer-list>

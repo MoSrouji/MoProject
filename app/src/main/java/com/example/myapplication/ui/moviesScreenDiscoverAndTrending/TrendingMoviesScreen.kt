@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.myapplication.route.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
 import com.example.myapplication.ui.home.HomeViewModel
 import com.example.myapplication.ui.home.itemSpacing
@@ -38,7 +39,9 @@ fun TrendingMoviesScreen(
     Box(modifier = modifier.fillMaxWidth()) {
         AnimatedVisibility(
             state.error != null,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
+            enter = NavAnimations.slideInFromRight(),
+            exit = NavAnimations.slideOutToLeft()
         ) {
             Text(
                 state.error ?: "Unknown error",
@@ -46,7 +49,11 @@ fun TrendingMoviesScreen(
                 maxLines = 2
             )
         }
-        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
+        AnimatedVisibility(
+            visible = !state.isLoading && state.error == null,
+            enter = NavAnimations.slideInFromRight(),
+            exit = NavAnimations.slideOutToLeft()
+        ) {
             Column() {
 
                 Row(

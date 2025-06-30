@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -23,10 +24,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapplication.route.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
+import com.example.myapplication.ui.detail.DetailViewModel
+import com.example.myapplication.ui.detail.WatchLaterUiState
 import com.example.myapplication.ui.home.components.BodyContent
 import com.example.myapplication.ui.home.components.TopContent
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 val defaultPadding = 16.dp
@@ -35,14 +42,20 @@ val itemSpacing = 8.dp
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier, homeViewModel: HomeViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel = hiltViewModel(),
     onMovieClick: (id: Int) -> Unit,
     onDiscoverArrowClick: () -> Unit,
-    onTradingArrowClick: () -> Unit
+    onTradingArrowClick: () -> Unit,
+
 ) {
+    val context = LocalContext.current
+
+    val saveToWatchLaterLabel: String = "saveToWatchLater"
     var isAutoScrolling by remember {
         mutableStateOf(true)
     }
+
     val state by homeViewModel.homeState.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -66,9 +79,12 @@ fun HomeScreen(
         }
     }
 
-
     Box(modifier = modifier) {
-        AnimatedVisibility(visible = state.error != null) {
+        AnimatedVisibility(
+            visible = state.error != null,
+            enter = NavAnimations.slideInFromRight(),
+            exit = NavAnimations.slideOutToLeft()
+        ) {
             Text(
                 text = state.error ?: "Unknown error",
                 color = MaterialTheme.colorScheme.error,
@@ -77,63 +93,69 @@ fun HomeScreen(
 
 
         }
-        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
+        AnimatedVisibility(
+            visible = !state.isLoading && state.error == null,
+            enter = NavAnimations.slideInFromRight(),
+            exit = NavAnimations.slideOutToLeft()
+        ) {
 
-                BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-                    val boxHeight = maxHeight
-                    val topItemHeight = boxHeight * .45f
-                    val bodyItemHeight = boxHeight * .55f
-                    HorizontalPager(
-                        state = pagerState,
-                        contentPadding = PaddingValues(defaultPadding),
-                        pageSpacing = itemSpacing
-                    ) { page ->
-                        if (isAutoScrolling) {
-                            AnimatedContent(targetState = page) { index ->
-                                TopContent(
-                                    modifier = Modifier.align(Alignment.TopCenter)
-                                        .heightIn(min = topItemHeight),
-                                    movie = state.discoverMovies[index],
-                                    onMovieClick = {
-                                        onMovieClick(it)
-                                    }
-                                )
-
-
-                            }
-                        } else {
+            BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+                val boxHeight = maxHeight
+                val topItemHeight = boxHeight * .45f
+                val bodyItemHeight = boxHeight * .55f
+                HorizontalPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(defaultPadding),
+                    pageSpacing = itemSpacing
+                ) { page ->
+                    if (isAutoScrolling) {
+                        AnimatedContent(targetState = page) { index ->
                             TopContent(
-                                modifier = Modifier.align(Alignment.TopCenter)
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
                                     .heightIn(min = topItemHeight),
-                                movie = state.discoverMovies[page],
+                                movie = state.discoverMovies[index],
                                 onMovieClick = {
                                     onMovieClick(it)
                                 }
                             )
 
+
                         }
+                    } else {
+                        TopContent(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .heightIn(min = topItemHeight),
+                            movie = state.discoverMovies[page],
+                            onMovieClick = {
+                                onMovieClick(it)
+                            }
+                        )
 
                     }
 
-
-                    BodyContent(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .heightIn(max = bodyItemHeight),
-                        discoverMovies = state.discoverMovies,
-                        trendingMovies = state.trendingMovies,
-                        onMovieClick = onMovieClick ,
-                        onTradingArrowClick = onTradingArrowClick,
-                        onDiscoverArrowClick = onDiscoverArrowClick
-                        )
-
                 }
+
+
+                BodyContent(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .heightIn(max = bodyItemHeight),
+                    discoverMovies = state.discoverMovies,
+                    trendingMovies = state.trendingMovies,
+                    onMovieClick = onMovieClick,
+                    onTradingArrowClick = onTradingArrowClick,
+                    onDiscoverArrowClick = onDiscoverArrowClick
+                )
+
             }
-
-
         }
-        LoadingView(isLoading = state.isLoading)
+
+
     }
+    LoadingView(isLoading = state.isLoading)
+}
 
 
 

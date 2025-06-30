@@ -6,5 +6,6 @@ import com.example.myapplication.utils.Response
 interface MovieRepository {
     suspend fun fetchDiscoverMovie(): Flow<Response< List<Movie>>>
     suspend fun fetchTrendingMovie(): Flow<Response< List<Movie>>>
+    suspend fun searchMovie(movieName: String, releaseDate: String): Flow<Response<List<Movie>>>
 
 }
