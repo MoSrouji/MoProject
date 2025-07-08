@@ -1,7 +1,6 @@
 package com.example.myapplication.ui.home
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -26,14 +25,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.myapplication.route.NavAnimations
+import com.example.myapplication.movie.domain.models.Movie
+import com.example.myapplication.navigation.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
-import com.example.myapplication.ui.detail.DetailViewModel
-import com.example.myapplication.ui.detail.WatchLaterUiState
 import com.example.myapplication.ui.home.components.BodyContent
 import com.example.myapplication.ui.home.components.TopContent
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 val defaultPadding = 16.dp
@@ -49,6 +45,9 @@ fun HomeScreen(
     onTradingArrowClick: () -> Unit,
 
 ) {
+    val onBookMarkClick: (Movie) -> Unit = { movie ->
+        homeViewModel.selectedMovie(movie)
+    }
     val context = LocalContext.current
 
     val saveToWatchLaterLabel: String = "saveToWatchLater"
@@ -146,11 +145,14 @@ fun HomeScreen(
                     trendingMovies = state.trendingMovies,
                     onMovieClick = onMovieClick,
                     onTradingArrowClick = onTradingArrowClick,
-                    onDiscoverArrowClick = onDiscoverArrowClick
-                )
+                    onDiscoverArrowClick = onDiscoverArrowClick,
+                    onBookMarkClick = onBookMarkClick  )
+
+
 
             }
         }
+
 
 
     }

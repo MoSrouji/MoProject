@@ -17,7 +17,8 @@ import androidx.compose.ui.text.style.TextOverflow
 @Composable
 
 fun TopAppBar(
-    onSearchClick:() -> Unit
+    onSearchClick:() -> Unit ,
+    onUserButtonClick:() -> Unit
 ) {
             TopAppBar(
                 title = { Text("Bat-Rate", maxLines = 1, overflow = TextOverflow.Ellipsis) },
@@ -36,10 +37,10 @@ fun TopAppBar(
                             contentDescription = "Search",
                         )
                     }
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(onClick = onUserButtonClick) {
             Icon(
                 imageVector = Icons.Filled.PersonPin,
-                contentDescription = "Localized description",
+                contentDescription = "User Profile",
             )
         }
                 },

@@ -2,6 +2,7 @@ package com.example.myapplication.ui.search
 
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,10 +29,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.myapplication.route.NavAnimations
+import com.example.myapplication.navigation.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
 import com.example.myapplication.ui.home.itemSpacing
 import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.MovieCardShow
+import com.example.myapplication.ui.search.component.SearchHistoryCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,6 +43,7 @@ fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel(),
     onMovieClick: (id: Int) -> Unit,
     onNavigateUP: () -> Unit,
+
 
     ) {
     val state by viewModel.searchState.collectAsStateWithLifecycle()
@@ -98,6 +101,20 @@ fun SearchScreen(
                     modifier = Modifier.padding(5.dp)
                 ) {
 
+                    LazyColumn( modifier = Modifier ,
+                        horizontalAlignment = Alignment.CenterHorizontally ,
+                        verticalArrangement = Arrangement.SpaceBetween) {
+
+                        items(viewModel.browseHistory) {
+
+                            SearchHistoryCard(
+                                modifier = Modifier.fillMaxWidth() ,
+                                text = it ,
+                                onSearchCardClick = viewModel.onTextChanged(it)
+                            )
+                        }
+
+                    }
                 }
 
                 Text(

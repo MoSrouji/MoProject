@@ -14,4 +14,8 @@ interface AuthRepository {
         password: String
     ): Flow<Response<Boolean>>
 
+
+    suspend fun firebaseSignOut(): Flow<Response<Boolean>>
+
+
 }

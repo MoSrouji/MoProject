@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.myapplication.route.NavAnimations
+import com.example.myapplication.navigation.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
 import com.example.myapplication.ui.home.HomeViewModel
 import com.example.myapplication.ui.home.itemSpacing

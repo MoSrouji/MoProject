@@ -7,4 +7,5 @@ data class User(
     val bio : String?=null,
     val saveToWatchLater: MutableMap<String , String> ? = mutableMapOf(),
     val saveToWatched: MutableMap<String , String> ? =mutableMapOf(),
+    val searchHistory: MutableList<String > ? =mutableListOf(),
 )

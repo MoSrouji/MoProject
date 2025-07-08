@@ -1,12 +1,15 @@
 package com.example.myapplication.ui.search
 
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.movie.domain.repository.MovieRepository
+import com.example.myapplication.save_list.domain.repository.SaveListRepo
 import com.example.myapplication.ui.home.HomeState
 import com.example.myapplication.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val repository: MovieRepository ,
+    private val searchBrowserRepository : SaveListRepo
 ) : ViewModel() {
 
     private val _searchState = MutableStateFlow(HomeState())
@@ -28,9 +32,14 @@ class SearchViewModel @Inject constructor(
 
     var expanded by mutableStateOf(false)
 
+    var browseHistory : List<String> = mutableListOf()
+
     fun onBtnCLick(){
         searchMovies(query)
+        saveBrowseData()
     }
+
+
 
     fun onTextChanged(newText: String) {
         query = newText
@@ -39,6 +48,9 @@ class SearchViewModel @Inject constructor(
          expanded = expand
     }
 
+init {
+    getBrowserData()
+}
 
     private fun searchMovies(movieName: String) = viewModelScope.launch {
         repository.searchMovie(movieName, "").collectAndHandle(
@@ -62,6 +74,26 @@ class SearchViewModel @Inject constructor(
             }
 
         }
+    }
+
+    private fun saveBrowseData(){
+        viewModelScope.launch {
+            try {
+                searchBrowserRepository.searchHistory(query, "searchHistory")
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
+    private fun getBrowserData(){
+        viewModelScope.launch {
+            try {
+               browseHistory = searchBrowserRepository.getSearchHistory("searchHistory")
+            }catch (e: Exception){
+            }
+        }
+
     }
 
 

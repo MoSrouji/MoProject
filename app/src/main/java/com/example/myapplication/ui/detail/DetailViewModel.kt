@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.movie_detail.domain.repository.MovieDetailRepository
-import com.example.myapplication.save_list.domain.repository.UserRepo
+import com.example.myapplication.save_list.domain.repository.SaveListRepo
 import com.example.myapplication.utils.K
 import com.example.myapplication.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class DetailViewModel @Inject constructor(
     private val repository: MovieDetailRepository,
     savedstateHandle: SavedStateHandle,
-    private val userRepository: UserRepo
+    private val userRepository: SaveListRepo
 
 ) : ViewModel() {
     private val _detailState = MutableStateFlow(DetailState())
@@ -32,7 +32,11 @@ class DetailViewModel @Inject constructor(
     val userState: StateFlow<WatchLaterUiState> = _userState
 
 
-    fun addToWatch(labelName: String, movieName: String, realiseDate: String) {
+    private val _usersState = MutableStateFlow<WatchLaterUiState>(WatchLaterUiState.Idle)
+    val usersState: StateFlow<WatchLaterUiState> = _usersState
+
+
+    fun addToWatched(labelName: String, movieName: String, realiseDate: String) {
         viewModelScope.launch {
             _userState.value = WatchLaterUiState.Loading
             try {
@@ -41,6 +45,22 @@ class DetailViewModel @Inject constructor(
                     movieName = movieName,
                     realiseDate=realiseDate)
                 _userState.value = WatchLaterUiState.Success("Added to watch later")
+            } catch (e: Exception) {
+                Log.e("DetailViewModel", "Error adding to watch later: ${e.message}")
+                _userState.value =
+                    WatchLaterUiState.Error("Failed to add'$movieName' to watch later . please try again ")
+            }
+        }
+    }
+    fun addToWatchLater(labelName: String, movieName: String, realiseDate: String) {
+        viewModelScope.launch {
+            _usersState.value = WatchLaterUiState.Loading
+            try {
+                userRepository.addToWatch(
+                    labelName = labelName,
+                    movieName = movieName,
+                    realiseDate=realiseDate)
+                _usersState.value = WatchLaterUiState.Success("Added to watch later")
             } catch (e: Exception) {
                 Log.e("DetailViewModel", "Error adding to watch later: ${e.message}")
                 _userState.value =
@@ -127,6 +147,7 @@ class DetailViewModel @Inject constructor(
     }
     fun resetState(){
         _userState.value = WatchLaterUiState.Idle
+        _usersState.value = WatchLaterUiState.Idle
     }
 
 }

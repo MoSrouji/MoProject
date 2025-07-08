@@ -34,6 +34,7 @@ fun MovieCoverImage(
     modifier: Modifier = Modifier,
     movie: Movie,
     onMovieClick: (Int) -> Unit,
+    onBookMarkClick :()-> Unit
 
 ) {
     val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -62,7 +63,7 @@ fun MovieCoverImage(
                 .padding(4.dp)
         ) {
             IconButton(
-               onClick = {}
+               onClick = {onBookMarkClick()}
             ) {
             Icon(
                 imageVector = Icons.Default.BookmarkAdd,

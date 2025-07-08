@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.Review
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
+import com.example.myapplication.ui.detail.WatchLaterUiState
 import com.example.myapplication.ui.home.components.MovieCard
 import com.example.myapplication.ui.home.components.MovieCoverImage
 import com.example.myapplication.ui.home.defaultPadding
@@ -58,7 +59,8 @@ fun DetailBodyContent(
     onActorClick: (Int) -> Unit,
     onBookMarkClick:()-> Unit,
     onWatchedClick:()-> Unit,
-    loading: Boolean
+    watchLaterLoading: Boolean,
+    watchedLoading: Boolean
 ) {
     LazyColumn(
         modifier = modifier
@@ -129,13 +131,13 @@ fun DetailBodyContent(
                     ) {
                         SaveWatchButton(
                             onClick = onBookMarkClick,
-                            loading = loading,
+                            loading = watchLaterLoading,
                             bgColor = Color.Black.copy(.5f) ,
                             icon = Icons.Default.BookmarkAdd
                         )
                         SaveWatchButton(
                             onClick = onWatchedClick,
-                            loading = loading,
+                            loading = watchedLoading,
                             bgColor = Color.Black.copy(.5f),
                             icon = Icons.Default.WatchLater
                         )
@@ -296,33 +298,34 @@ private fun SaveWatchButton(
     icon: ImageVector
 
 
-    ){
+    ) {
     MovieCard(
         shapes = CircleShape,
         modifier = modifier
             .padding(4.dp).size(35.dp),
         bgColor = bgColor
-    ){
-if (loading){
-    CircularProgressIndicator(modifier = Modifier.size(20.dp))
-
-}else{
-    IconButton(
-        onClick = onClick
     ) {
-        Icon(
-            imageVector = icon ,
-            contentDescription = "Save To Watch Later" ,
-            modifier = Modifier.padding(4.dp)
 
-        )
+        if (loading) {
 
+            CircularProgressIndicator(modifier = Modifier.size(20.dp))
+        } else {
+            IconButton(
+                onClick = onClick,
+
+                ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Save To Watch Later",
+                    modifier = Modifier.padding(4.dp)
+
+                )
+
+            }
+        }
     }
 }
-    }
 
-
-    }
 
 
 
@@ -394,7 +397,8 @@ fun MoreLikeThis(
             items(
                 movies
             ) {
-                MovieCoverImage(movie = it, onMovieClick = onMovieClick )
+                MovieCoverImage(movie = it, onMovieClick = onMovieClick,
+                    onBookMarkClick = {})
             }
         }
 

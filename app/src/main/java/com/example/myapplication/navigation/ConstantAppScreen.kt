@@ -1,4 +1,4 @@
-package com.example.myapplication.route
+package com.example.myapplication.navigation
 
 
 enum class ConstantAppScreen( route: String) {
@@ -9,6 +9,7 @@ enum class ConstantAppScreen( route: String) {
     MOVIE_DETAIL_SCREEN("movie_detail_screen"),
     DISCOVER_MOVIE_SCREEN("discover_movie_screen"),
     TRENDING_MOVIE_SCREEN("trending_movie_screen"),
-    SEARCH_SCREEN("search_screen")
+    SEARCH_SCREEN("search_screen"),
+    USER_DETAIL_SCREEN("user_detail_screen"),
 
 }

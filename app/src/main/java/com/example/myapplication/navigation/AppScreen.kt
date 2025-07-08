@@ -1,4 +1,4 @@
-package com.example.myapplication.route
+package com.example.myapplication.navigation
 
 import com.example.myapplication.utils.K
 
@@ -8,6 +8,8 @@ sealed class AppScreen() {
     data class SignUpScreen(val route: String = ConstantAppScreen.SIGN_UP_SCREEN.name) : AppScreen()
     data class HomeScreen(val route: String = ConstantAppScreen.HOME_SCREEN.name) : AppScreen()
     data class SearchScreen(val route: String = ConstantAppScreen.SEARCH_SCREEN.name) : AppScreen()
+    data class UserDetailScreen(val route: String = ConstantAppScreen.USER_DETAIL_SCREEN.name) : AppScreen()
+
     data class DiscoverMovieScreen(val route: String = ConstantAppScreen.DISCOVER_MOVIE_SCREEN.name) :
         AppScreen()
 

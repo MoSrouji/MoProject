@@ -80,7 +80,17 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun firebaseSignOut(): Flow<Response<Boolean>> =flow {
+        emit(Response.Loading)
+        try {
+            firebaseAuth.signOut()
+            emit(Response.Success(true))
+        } catch (e: Exception) {
+            emit(Response.Error(e.localizedMessage ?: "Sign out failed"))
+        }
+    }
 
 
+    }
 
-}
+

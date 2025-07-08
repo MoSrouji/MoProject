@@ -18,19 +18,18 @@ import com.example.myapplication.auth.domain.entities.Response
 import com.example.myapplication.ui.auth.validation.event.ValidationResultEvent
 import com.example.myapplication.ui.theme.ColorGunmetal
 import com.example.myapplication.R
-import com.example.myapplication.route.AppScreen
+import com.example.myapplication.navigation.AppScreen
 import com.example.myapplication.ui.auth.util.TextFieldType
 import com.example.myapplication.ui.auth.validation.event.ValidationEvent
 import com.example.myapplication.ui.auth.widget.button.AuthenticationButton
 import com.example.myapplication.ui.auth.widget.loading.LoadingScreen
 import com.example.myapplication.ui.auth.widget.textfield.AuthenticationTextField
-import com.example.myapplication.ui.detail.MovieDetailScreen
 
 @Composable
-fun SignInScreen(navController: NavController, signUpNav :()-> Unit , navToHomeScreen:()-> Unit) {
+fun SignInScreen(navController: NavController,
+                 navToHomeScreen: () -> Unit ,
+                 viewModel: SignInViewModel = hiltViewModel()) {
 
-
-    val viewModel: SignInViewModel = hiltViewModel()
     val context = LocalContext.current
     val signInState = viewModel.signInState.value
 
@@ -58,26 +57,29 @@ fun SignInScreen(navController: NavController, signUpNav :()-> Unit , navToHomeS
 
 
     LaunchedEffect(signInState) {
-        when(signInState){
-            is Response.Success ->{
-                if (signInState.data){
-                    Toast.makeText(context,R.string.sign_in_successfully,Toast.LENGTH_LONG).show()
+        when (signInState) {
+            is Response.Success -> {
+                if (signInState.data) {
+                    Toast.makeText(context, R.string.sign_in_successfully, Toast.LENGTH_LONG).show()
                     navToHomeScreen()
 
                 }
             }
+
             is Response.Error -> {
-                Toast.makeText(context,signInState.massage, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, signInState.massage, Toast.LENGTH_LONG).show()
             }
+
             is Response.Loading -> {
-               // Toast.makeText(context, "Loading ", Toast.LENGTH_LONG).show()
+                // Toast.makeText(context, "Loading ", Toast.LENGTH_LONG).show()
 
             }
         }
     }
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(ColorGunmetal)
     ) {
 
@@ -169,7 +171,7 @@ fun SignInScreen(navController: NavController, signUpNav :()-> Unit , navToHomeS
                 text = stringResource(id = R.string.forget_password),
             )
 
-            Spacer(modifier = Modifier.height(75.dp))
+            Spacer(modifier = Modifier.height(60.dp))
 
             Row(modifier = Modifier.clickable {
 
@@ -189,11 +191,16 @@ fun SignInScreen(navController: NavController, signUpNav :()-> Unit , navToHomeS
                 )
 
             }
+            Spacer(modifier = Modifier.width(10.dp).padding(bottom = 10.dp))
+            Text(text = "Or Continue As Guest" , modifier =  Modifier.clickable{
+                navToHomeScreen()
+               viewModel.restUser()
+            })
 
         }
 
-if (signInState == Response.Loading)
-    LoadingScreen()
+        if (signInState == Response.Loading)
+            LoadingScreen()
     }
 }
 

@@ -1,4 +1,4 @@
-package com.example.myapplication
+ package com.example.myapplication
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.route.LunchMovieApp
+import com.example.myapplication.navigation.LunchMovieApp
 import com.example.myapplication.ui.splash.SplashViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import com.google.firebase.FirebaseApp

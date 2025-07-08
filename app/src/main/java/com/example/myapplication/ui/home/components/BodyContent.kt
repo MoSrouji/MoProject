@@ -30,6 +30,7 @@ fun BodyContent(modifier: Modifier = Modifier,
                 onMovieClick:(id: Int) -> Unit,
                 onDiscoverArrowClick:() ->Unit,
                 onTradingArrowClick:()->Unit ,
+                onBookMarkClick:(Movie)-> Unit
               ) {
     LazyColumn (modifier = modifier) {
         item {
@@ -60,6 +61,7 @@ fun BodyContent(modifier: Modifier = Modifier,
                         MovieCoverImage(
                             movie = it ,
                             onMovieClick =onMovieClick ,
+                            onBookMarkClick = {onBookMarkClick(it)}
                          )
                     }
                 }
@@ -89,7 +91,8 @@ fun BodyContent(modifier: Modifier = Modifier,
                     items (trendingMovies) {
                         MovieCoverImage(
                             movie = it ,
-                            onMovieClick =onMovieClick )
+                            onMovieClick =onMovieClick ,
+                            onBookMarkClick = {onBookMarkClick(it)})
 
                     }
                 }

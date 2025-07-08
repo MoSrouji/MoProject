@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.myapplication.route.NavAnimations
+import com.example.myapplication.navigation.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
 import com.example.myapplication.ui.detail.components.DetailBodyContent
 import com.example.myapplication.ui.detail.components.DetailTopContent
@@ -42,7 +42,8 @@ fun MovieDetailScreen(
 
     val state = movieDetailViewModel.detailState.collectAsStateWithLifecycle().value
 
-    val userUiState = movieDetailViewModel.userState.collectAsStateWithLifecycle().value
+    val watchedState = movieDetailViewModel.userState.collectAsStateWithLifecycle().value
+    val watchLaterState = movieDetailViewModel.usersState.collectAsStateWithLifecycle().value
     val saveToWatchLaterLabel: String = "saveToWatchLater"
     val saveToWatchedLabel: String = "saveToWatched"
 
@@ -82,15 +83,31 @@ fun MovieDetailScreen(
                             .align(Alignment.TopCenter)
                     )
                     // State observation
-                    LaunchedEffect(userUiState) {
-                        when (userUiState) {  // Now using the actual state value
+                    LaunchedEffect(watchLaterState) {
+                        when (watchLaterState) {  // Now using the actual state value
                             is WatchLaterUiState.Success -> {
                                 Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
                                 movieDetailViewModel.resetState()
                             }
 
                             is WatchLaterUiState.Error -> {
-                                Toast.makeText(context, userUiState.errorMessage, Toast.LENGTH_LONG)
+                                Toast.makeText(context, watchLaterState.errorMessage, Toast.LENGTH_LONG)
+                                    .show()
+                                movieDetailViewModel.resetState()
+                            }
+
+                            else -> Unit
+                        }
+                    }     // State observation
+                    LaunchedEffect(watchedState) {
+                        when (watchedState) {  // Now using the actual state value
+                            is WatchLaterUiState.Success -> {
+                                Toast.makeText(context, "Added", Toast.LENGTH_LONG).show()
+                                movieDetailViewModel.resetState()
+                            }
+
+                            is WatchLaterUiState.Error -> {
+                                Toast.makeText(context, watchedState.errorMessage, Toast.LENGTH_LONG)
                                     .show()
                                 movieDetailViewModel.resetState()
                             }
@@ -111,7 +128,7 @@ fun MovieDetailScreen(
                         onBookMarkClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
-                                movieDetailViewModel.addToWatch(
+                                movieDetailViewModel.addToWatchLater(
                                     labelName = saveToWatchLaterLabel,
                                     movieName = state.movieDetail.title,
                                     realiseDate = state.movieDetail.releaseDate
@@ -126,7 +143,7 @@ fun MovieDetailScreen(
                         }, onWatchedClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
-                                movieDetailViewModel.addToWatch(
+                                movieDetailViewModel.addToWatched(
                                     labelName = saveToWatchedLabel,
                                     movieName = state.movieDetail.title,
                                     realiseDate = state.movieDetail.releaseDate
@@ -139,7 +156,8 @@ fun MovieDetailScreen(
                                 ).show()
                             }
                         },
-                        loading = userUiState is WatchLaterUiState.Loading ,
+                        watchLaterLoading = watchLaterState is WatchLaterUiState.Loading ,
+                        watchedLoading= watchedState is WatchLaterUiState.Loading ,
 
                     )
 

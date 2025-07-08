@@ -81,12 +81,24 @@ class HomeViewModel @Inject constructor(
 
     }
 
-
+    // to handle movie selection
+fun selectedMovie(movie: Movie){
+    _homeState.update {
+        it.copy(movie = movie)
+    }
+}
+    fun getSelectedMovie(): Movie?{
+        return _homeState.value.movie
+    }
+    fun newfun(){
+        getSelectedMovie()?.title
+    }
 
 
 }
 
 data class HomeState(
+    val movie: Movie ?=null,
     val searchMovies: List<Movie> = emptyList(),
     val discoverMovies: List<Movie> = emptyList(),
     val trendingMovies: List<Movie> = emptyList(),

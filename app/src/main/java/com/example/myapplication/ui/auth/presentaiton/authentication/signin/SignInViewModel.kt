@@ -8,6 +8,8 @@ import com.example.myapplication.ui.auth.presentaiton.base.BaseValidationViewMod
 import com.example.myapplication.ui.auth.util.TextFieldType
 import com.example.myapplication.ui.auth.validation.interfaces.TextFieldId
 import com.example.myapplication.ui.auth.validation.state.ValidationState
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,6 +50,10 @@ fun firebaseSignIn(email: String , password: String){
        }
    }
 }
+
+    fun restUser(){
+        _signInState.value = Response.Success(false)
+    }
 
 }
 
