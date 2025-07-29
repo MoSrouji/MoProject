@@ -4,6 +4,7 @@ import com.example.myapplication.auth.domain.entities.User
 import com.example.myapplication.auth.network.NetworkConstant.COLLECTION_NAME_USERS
 import com.example.myapplication.auth.user_detail.domain.repository.UserDetailRepo
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -32,9 +33,18 @@ class UserDetailRepoImpl @Inject constructor(
 
     }
 
-    override suspend fun updateUser(user: User): Boolean {
+
+
+    override suspend fun updateUser(user: User? , newEmail: String?): Boolean {
+       val currentUser = auth.currentUser?:return false
+
         return try {
-            db.collection(COLLECTION_NAME_USERS).document(user.userId!!).set(user).await()
+            newEmail.let {
+                currentUser.updateEmail(user?.email!!).await()
+            }
+
+            db.collection(COLLECTION_NAME_USERS).document(user?.userId!!).set(user).await()
+
             true
         }catch (e: Exception) {
             e.printStackTrace()

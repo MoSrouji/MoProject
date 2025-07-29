@@ -19,7 +19,8 @@ import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail
 fun UserDetailScreen(
     viewModel: UserDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onLogoutSuccess :()-> Unit
+    onLogoutSuccess :()-> Unit ,
+    navToUpdate:()-> Unit
 
 ) {
     val user by viewModel.userState
@@ -31,7 +32,7 @@ fun UserDetailScreen(
         when(logOutState){
             is Response.Success->{
                 onLogoutSuccess()
-            viewModel.resetLogoutState()
+                viewModel.resetLogoutState()
             }
             is Response.Error -> {
                 viewModel.resetLogoutState()
@@ -56,22 +57,21 @@ fun UserDetailScreen(
             isLoading = isLoading,
             error = error,
             onBackClick = onBackClick,
+            onRetry = {},
+            enableTextField = true,
+            buttonString = "Update User Information",
+            modifier = Modifier.padding(innerPadding),
+            onLogOutClick = {
+                viewModel.logout()
+            },
             onUpdateUser = { updatedUser ->
                 viewModel.updateUserDetail(updatedUser)
             },
-            onRetry = {},
-            enableTextField = false,
-            buttonString = "Update User Information" ,
-            modifier = Modifier.padding(innerPadding) ,
-            onLogOutClick = {
-                viewModel.logout()
-            }
         )
         if (logOutState is Response.Loading) {
             CircularProgressIndicator()
         }
 
     }
-    }
-
+}
 

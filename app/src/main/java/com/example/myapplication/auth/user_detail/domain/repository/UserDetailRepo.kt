@@ -5,5 +5,6 @@ import com.example.myapplication.auth.domain.entities.User
 
 interface UserDetailRepo {
     suspend fun getCurrentUser(): User?
-    suspend fun updateUser(user: User): Boolean
+    suspend fun updateUser(user: User? ,newEmail: String?=null ): Boolean
+
 }

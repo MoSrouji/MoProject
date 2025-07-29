@@ -58,7 +58,7 @@ class UserDetailViewModel @Inject constructor(
     }
 
 
-    fun updateUserDetail(userDetail: User) {
+    fun updateUserDetail(userDetail: User?) {
         viewModelScope.launch {
             _loadingState.value = true
             _errorState.value = null

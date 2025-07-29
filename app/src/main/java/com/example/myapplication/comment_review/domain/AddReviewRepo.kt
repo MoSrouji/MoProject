@@ -6,4 +6,9 @@ interface MovieRatingRepository {
     suspend fun getMovieRating(movieId: Int): MovieRating?
     suspend fun rateMovie(movieId: Int, rating: Float)
     suspend fun getUserRating(movieId: Int): Float?
+    suspend fun addMovieReview(movieId: Int , review: String)
+    suspend fun getUserReview(movieId: Int): String?
+
+
+
 }
