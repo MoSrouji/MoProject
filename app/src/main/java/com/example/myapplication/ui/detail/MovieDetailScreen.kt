@@ -2,7 +2,6 @@ package com.example.myapplication.ui.detail
 
 import android.annotation.SuppressLint
 import android.widget.Toast
-
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,10 +45,20 @@ fun MovieDetailScreen(
 
     val watchedState = movieDetailViewModel.userState.collectAsStateWithLifecycle().value
     val watchLaterState = movieDetailViewModel.usersState.collectAsStateWithLifecycle().value
+
+
+    val ratingState by movieDetailViewModel.ratingState.collectAsState()
+    val rateState by movieDetailViewModel.ratingState.collectAsState()
+    val userRating by movieDetailViewModel.userRating.collectAsState()
+
+    val userReview by movieDetailViewModel.userReview.collectAsStateWithLifecycle()
+
+
     val saveToWatchLaterLabel: String = "saveToWatchLater"
     val saveToWatchedLabel: String = "saveToWatched"
 
     val context = LocalContext.current
+
 
     Box(modifier = modifier.fillMaxWidth()) {
         AnimatedVisibility(
@@ -67,6 +78,7 @@ fun MovieDetailScreen(
             enter = NavAnimations.slideInFromRight(),
             exit = NavAnimations.slideOutToLeft()
         ) {
+            movieDetailViewModel.loadMovieData()
 
 
             BoxWithConstraints(
@@ -91,7 +103,11 @@ fun MovieDetailScreen(
                             }
 
                             is WatchLaterUiState.Error -> {
-                                Toast.makeText(context, watchLaterState.errorMessage, Toast.LENGTH_LONG)
+                                Toast.makeText(
+                                    context,
+                                    watchLaterState.errorMessage,
+                                    Toast.LENGTH_LONG
+                                )
                                     .show()
                                 movieDetailViewModel.resetState()
                             }
@@ -107,7 +123,11 @@ fun MovieDetailScreen(
                             }
 
                             is WatchLaterUiState.Error -> {
-                                Toast.makeText(context, watchedState.errorMessage, Toast.LENGTH_LONG)
+                                Toast.makeText(
+                                    context,
+                                    watchedState.errorMessage,
+                                    Toast.LENGTH_LONG
+                                )
                                     .show()
                                 movieDetailViewModel.resetState()
                             }
@@ -140,7 +160,8 @@ fun MovieDetailScreen(
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-                        }, onWatchedClick = {
+                        },
+                        onWatchedClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
                                 movieDetailViewModel.addToWatched(
@@ -156,9 +177,14 @@ fun MovieDetailScreen(
                                 ).show()
                             }
                         },
-                        watchLaterLoading = watchLaterState is WatchLaterUiState.Loading ,
-                        watchedLoading= watchedState is WatchLaterUiState.Loading ,
+                        watchLaterLoading = watchLaterState is WatchLaterUiState.Loading,
+                        watchedLoading = watchedState is WatchLaterUiState.Loading,
 
+
+                        ratingState = ratingState,
+                        userRating = userRating,
+                        viewModel = movieDetailViewModel,
+                        userReview = userReview,
                     )
 
                 }
@@ -181,5 +207,10 @@ fun MovieDetailScreen(
 
 
 }
+
+
+
+
+
 
 

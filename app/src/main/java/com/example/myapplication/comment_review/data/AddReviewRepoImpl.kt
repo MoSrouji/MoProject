@@ -14,6 +14,7 @@ class MovieRatingRepositoryImpl @Inject constructor(
         private const val COLLECTION_NAME = "movieRatings"
     }
 
+
     override suspend fun getMovieRating(movieId: Int): MovieRating? {
         return try {
             val document = firestore.collection(COLLECTION_NAME)
@@ -34,26 +35,28 @@ class MovieRatingRepositoryImpl @Inject constructor(
     override suspend fun rateMovie(movieId: Int, rating: Float) {
         try {
             val userId = auth.currentUser?.uid ?: throw MovieRatingException("User not authenticated")
-
-            val documentRef = firestore.collection(COLLECTION_NAME)
-                .document(movieId.toString())
-
-            firestore.runTransaction { transaction ->
-                val snapshot = transaction.get(documentRef)
-                val currentData = if (snapshot.exists()) {
-                    MovieRating.fromMap(snapshot.data!!)
-                } else {
-                    MovieRating(movieId.toString())
-                }
-
+            updateMovieRating(movieId) { currentData ->
                 val updatedRatings = currentData.userRating.toMutableMap().apply {
                     this[userId] = rating
                 }
-
-                transaction.set(documentRef, currentData.copy(userRating = updatedRatings).toMap())
-            }.await()
+                currentData.copy(userRating = updatedRatings)
+            }
         } catch (e: Exception) {
             throw MovieRatingException("Failed to rate movie", e)
+        }
+    }
+
+    override suspend fun addMovieReview(movieId: Int, review: String) {
+        try {
+            val userId = auth.currentUser?.uid ?: throw MovieRatingException("User not authenticated")
+            updateMovieRating(movieId) { currentData ->
+                val updatedReviews = currentData.userReviews.toMutableMap().apply {
+                    this[userId] = review
+                }
+                currentData.copy(userReviews = updatedReviews)
+            }
+        } catch (e: Exception) {
+            throw MovieRatingException("Failed to add movie review", e)
         }
     }
 
@@ -61,6 +64,28 @@ class MovieRatingRepositoryImpl @Inject constructor(
         val userId = auth.currentUser?.uid ?: return null
         return getMovieRating(movieId)?.userRating?.get(userId)
     }
+
+    override suspend fun getUserReview(movieId: Int): String? {
+        val userId = auth.currentUser?.uid ?: return null
+        return getMovieRating(movieId)?.userReviews?.get(userId)
+    }
+
+
+    private suspend fun updateMovieRating(movieId: Int, update: (MovieRating) -> MovieRating) {
+        val documentRef = firestore.collection(COLLECTION_NAME)
+            .document(movieId.toString())
+
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(documentRef)
+            val currentData = if (snapshot.exists()) {
+                MovieRating.fromMap(snapshot.data!!)
+            } else {
+                MovieRating(movieId.toString())
+            }
+            transaction.set(documentRef, update(currentData).toMap())
+        }.await()
+    }
 }
+
 
 class MovieRatingException(message: String, cause: Throwable? = null) : Exception(message, cause)

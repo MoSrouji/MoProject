@@ -3,7 +3,8 @@ package com.example.myapplication.ui.detail
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.myapplication.comment_review.domain.MovieRatingRepository
+import com.example.myapplication.comment_review.domain.entities.MovieRating
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.movie_detail.domain.repository.MovieDetailRepository
@@ -17,12 +18,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
     private val repository: MovieDetailRepository,
     savedstateHandle: SavedStateHandle,
-    private val userRepository: SaveListRepo
+    private val userRepository: SaveListRepo ,
+    private val rateRepository: MovieRatingRepository
+
 
 ) : ViewModel() {
     private val _detailState = MutableStateFlow(DetailState())
@@ -34,6 +38,17 @@ class DetailViewModel @Inject constructor(
 
     private val _usersState = MutableStateFlow<WatchLaterUiState>(WatchLaterUiState.Idle)
     val usersState: StateFlow<WatchLaterUiState> = _usersState
+
+    private val _ratingState = MutableStateFlow<MovieRatingUiState>(MovieRatingUiState.Loading)
+    val ratingState: StateFlow<MovieRatingUiState> = _ratingState.asStateFlow()
+
+    private val _userReview = MutableStateFlow<String?>(null)
+    val userReview: StateFlow<String?> = _userReview.asStateFlow()
+
+    private val _userRating = MutableStateFlow<Float?>(null)
+    val userRating: StateFlow<Float?> = _userRating.asStateFlow()
+
+
 
 
     fun addToWatched(labelName: String, movieName: String, realiseDate: String) {
@@ -70,12 +85,10 @@ class DetailViewModel @Inject constructor(
     }
 
     val id: Int = savedstateHandle.get<Int>(K.MOVIE_ID) ?: -1
-
-
     init {
         fetchMovieDetailById()
+        loadMovieData()
     }
-
      fun fetchMovieDetailById() = viewModelScope.launch {
         if (id == -1) {
             _detailState.update {
@@ -114,8 +127,6 @@ class DetailViewModel @Inject constructor(
 
         }
     }
-
-
     fun fetchMovie() = viewModelScope.launch {
         repository.fetchMovie().collectAndHandle(
             onError = { error ->
@@ -150,7 +161,52 @@ class DetailViewModel @Inject constructor(
         _usersState.value = WatchLaterUiState.Idle
     }
 
-}
+
+    fun loadMovieData() {
+        viewModelScope.launch {
+            _ratingState.value = MovieRatingUiState.Loading
+            try {
+                val rating = rateRepository.getMovieRating(id)
+                _userRating.value = rateRepository.getUserRating(id)
+                _userReview.value = rateRepository.getUserReview(id)
+                _ratingState.value = MovieRatingUiState.Success(rating)
+            } catch (e: Exception) {
+                _ratingState.value = MovieRatingUiState.Error(e.message ?: "Failed to load movie data")
+            }
+        }
+    }
+
+fun rateMovie(rating: Float) {
+
+        viewModelScope.launch {
+            try {
+                rateRepository.rateMovie(id, rating)
+                _userRating.value = rating
+            //    loadMovieData() // Refresh data
+            } catch (e: Exception) {
+                _ratingState.value = MovieRatingUiState.Error(e.message ?: "Failed to rate movie")
+            }
+        }
+    }
+
+    fun submitReview(review: String) {
+            viewModelScope.launch {
+                try {
+                    rateRepository.addMovieReview(id, review)
+                    _userReview.value = review
+                    loadMovieData() // Refresh data
+                } catch (e: Exception) {
+                    _ratingState.value = MovieRatingUiState.Error(e.message ?: "Failed to submit review")
+                }
+            }
+        }
+    }
+
+
+
+
+
+
 
 
 data class DetailState(
@@ -167,4 +223,11 @@ sealed class WatchLaterUiState {
     object Loading : WatchLaterUiState()
     data class Success(val message: String) : WatchLaterUiState()
     data class Error(val errorMessage: String) : WatchLaterUiState()
+}
+
+
+sealed class MovieRatingUiState {
+    object Loading : MovieRatingUiState()
+    data class Success(val movieRating: MovieRating?) : MovieRatingUiState()
+    data class Error(val message: String) : MovieRatingUiState()
 }

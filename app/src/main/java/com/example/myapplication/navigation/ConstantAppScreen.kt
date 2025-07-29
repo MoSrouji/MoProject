@@ -11,5 +11,6 @@ enum class ConstantAppScreen( route: String) {
     TRENDING_MOVIE_SCREEN("trending_movie_screen"),
     SEARCH_SCREEN("search_screen"),
     USER_DETAIL_SCREEN("user_detail_screen"),
+    UPDATE_USER_DETAIL_SCREEN("update_user_detail_screen"),
 
 }

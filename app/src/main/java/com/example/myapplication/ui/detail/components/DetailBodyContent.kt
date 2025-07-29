@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,33 +17,43 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.BookmarkAdd
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WatchLater
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.myapplication.comment_review.domain.entities.MovieRating
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.Review
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
-import com.example.myapplication.ui.detail.WatchLaterUiState
+import com.example.myapplication.ui.detail.DetailViewModel
+import com.example.myapplication.ui.detail.MovieRatingUiState
 import com.example.myapplication.ui.home.components.MovieCard
 import com.example.myapplication.ui.home.components.MovieCoverImage
 import com.example.myapplication.ui.home.defaultPadding
@@ -57,10 +68,14 @@ fun DetailBodyContent(
     fetchMovies: () -> Unit,
     onMovieClick: (Int) -> Unit,
     onActorClick: (Int) -> Unit,
-    onBookMarkClick:()-> Unit,
-    onWatchedClick:()-> Unit,
+    onBookMarkClick: () -> Unit,
+    onWatchedClick: () -> Unit,
     watchLaterLoading: Boolean,
-    watchedLoading: Boolean
+    watchedLoading: Boolean,
+    viewModel: DetailViewModel,
+    ratingState: MovieRatingUiState,
+    userRating: Float?,
+    userReview: String?
 ) {
     LazyColumn(
         modifier = modifier
@@ -132,7 +147,7 @@ fun DetailBodyContent(
                         SaveWatchButton(
                             onClick = onBookMarkClick,
                             loading = watchLaterLoading,
-                            bgColor = Color.Black.copy(.5f) ,
+                            bgColor = Color.Black.copy(.5f),
                             icon = Icons.Default.BookmarkAdd
                         )
                         SaveWatchButton(
@@ -153,7 +168,6 @@ fun DetailBodyContent(
                             )
 
                         }
-
 
 
                     }
@@ -221,11 +235,28 @@ fun DetailBodyContent(
                     Spacer(modifier = Modifier.height(itemSpacing))
                     Review(reviews = movieDetail.reviews)
                     Spacer(modifier = Modifier.height(itemSpacing))
+
+                    //Create a User Rate and Review Here :)
+//
+//                    MovieRatingScreen(
+//                        uiState = ratingState,
+//                        userRating = userRating,
+//                        viewModel = viewModel
+//
+//                    )
+
+                    MovieRatingReviewScreen(
+                        viewModel = viewModel,
+                        userRating = userRating,
+                        userReview = userReview,
+                        ratingState = ratingState,
+                    )
+
                     MoreLikeThis(
                         fetchMovies = fetchMovies,
                         isMovieLoading = isMovieLoading,
-                        movies = movies ,
-                        onMovieClick = onMovieClick ,
+                        movies = movies,
+                        onMovieClick = onMovieClick,
                     )
                 }
 
@@ -235,38 +266,39 @@ fun DetailBodyContent(
     }
 }
 
-private enum class ActionIcon(val icon: ImageVector, val contentDescription: String  ) {
+private enum class ActionIcon(val icon: ImageVector, val contentDescription: String) {
 
-    Share(icon = Icons.Default.Share, contentDescription = "Share" ),
+    Share(icon = Icons.Default.Share, contentDescription = "Share"),
     Download(icon = Icons.Default.Download, contentDescription = "Download")
 
 }
 
+//Action Button Row Function
 @Composable
 private fun ActionIconBtn(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     contentDescription: String? = null,
-    bgColor: Color = Color.Black.copy(.8f) ,
+    bgColor: Color = Color.Black.copy(.8f),
 ) {
     MovieCard(
         shapes = CircleShape,
         modifier = modifier
             .padding(4.dp),
         bgColor = bgColor
-    ){
-            Icon(
-                imageVector = icon,
-                contentDescription = contentDescription,
-                modifier = Modifier.padding(4.dp)
-            )
-        }
-
-
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            modifier = Modifier.padding(4.dp)
+        )
     }
 
 
+}
 
+
+//movie information function
 @Composable
 private fun MovieInfoItem(infoItem: List<String>, title: String) {
     Row(
@@ -289,20 +321,23 @@ private fun MovieInfoItem(infoItem: List<String>, title: String) {
     }
 }
 
+
+//Save to Function
 @Composable
 private fun SaveWatchButton(
     onClick: () -> Unit,
     loading: Boolean,
     modifier: Modifier = Modifier,
-    bgColor: Color = Color.Black.copy(.8f) ,
+    bgColor: Color = Color.Black.copy(.8f),
     icon: ImageVector
 
 
-    ) {
+) {
     MovieCard(
         shapes = CircleShape,
         modifier = modifier
-            .padding(4.dp).size(35.dp),
+            .padding(4.dp)
+            .size(35.dp),
         bgColor = bgColor
     ) {
 
@@ -327,11 +362,7 @@ private fun SaveWatchButton(
 }
 
 
-
-
-
-
-
+//Review From The API Function
 
 @Composable
 private fun Review(
@@ -364,13 +395,16 @@ private fun Review(
     }
 }
 
+
+//Get More Movie Like This Function
+
 @Composable
 fun MoreLikeThis(
     modifier: Modifier = Modifier,
     fetchMovies: () -> Unit,
     isMovieLoading: Boolean,
     movies: List<Movie>,
-    onMovieClick: (Int) -> Unit ,
+    onMovieClick: (Int) -> Unit,
 ) {
 
     LaunchedEffect(key1 = true) {
@@ -397,10 +431,232 @@ fun MoreLikeThis(
             items(
                 movies
             ) {
-                MovieCoverImage(movie = it, onMovieClick = onMovieClick,
+                MovieCoverImage(
+                    movie = it, onMovieClick = onMovieClick,
                     onBookMarkClick = {})
             }
         }
 
     }
+}
+
+
+@Composable
+fun MovieRatingReviewScreen(
+    viewModel: DetailViewModel,
+    ratingState: MovieRatingUiState ,
+    userRating: Float?,
+    userReview: String?
+) {
+
+    var reviewText by remember { mutableStateOf(TextFieldValue(userReview ?: "")) }
+
+    var selectedRating by remember {
+        mutableStateOf<Float?>(null)
+    }
+
+    Column(
+        modifier = Modifier
+           // .padding(16.dp)
+            .fillMaxWidth() // Changed from fillMaxSize to fillMaxWidth
+    ) {
+
+
+        when (ratingState) {
+            is MovieRatingUiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+Column {
+                    CircularProgressIndicator()
+                    Text("Loading")
+                }
+                }
+            }
+
+            is MovieRatingUiState.Error -> {
+                Text(
+                    text = (ratingState as MovieRatingUiState.Error).message,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            is MovieRatingUiState.Success -> {
+                // Rating Section
+
+                // Display existing reviews if available
+                val movieRating = (ratingState as MovieRatingUiState.Success).movieRating
+
+                Text(
+                    text = " BATS_REVIEW :",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.padding(itemSpacing))
+
+                RatingSummary(movieRating)
+                Spacer(modifier = Modifier.padding(itemSpacing))
+                if (!movieRating?.userReviews.isNullOrEmpty()) {
+                    Column { // Changed from LazyColumn to regular Column since reviews are likely few
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        movieRating.userReviews.forEach { (userId, review) ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Column(modifier = Modifier.padding(8.dp)) {
+                                    Text(
+                                        text = "User ${userId.take(8)}...",
+                                        style = MaterialTheme.typography.labelMedium
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = userRating.toString(),
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+
+                                    Text(text = review)
+
+                                    HorizontalDivider(thickness = 2.dp)
+
+                                }
+                            }
+                        }
+
+
+
+
+                    }
+
+                }
+                Column {
+                    Text(
+                        text = "Your Rating",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+                    RatingBar(
+                        currentRating = selectedRating ?: userRating,
+                        onRatingChanged = { selectedRating = it }
+                    )
+                    // Review Section
+                    Text(
+                        text = "Your Review",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+
+
+                    OutlinedTextField(
+                        value = reviewText,
+                        onValueChange = { reviewText = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Write your review here...") },
+                        maxLines = 5 ,
+                    )
+
+
+                    Button(
+                        onClick = {
+
+
+                            //viewModel.submitReview(reviewText.text)
+                            selectedRating?.let { rating ->
+                                viewModel.rateMovie(rating)
+                                viewModel.submitReview(reviewText.text)
+
+                            } ?: run {
+
+                            }
+
+                        },
+                        modifier = Modifier.align(Alignment.End),
+                        // enabled = reviewText.text.isNotBlank() && selectedRating != null
+                    )
+                    {
+                        Text(
+                            "Submit Review"
+                        )
+                    }
+                }
+                    }
+                }
+
+
+        }
+
+
+        }
+
+
+
+
+@Composable
+fun RatingBar(
+    currentRating: Float?,
+    onRatingChanged: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(modifier = modifier) {
+        for (i in 1..5) {
+            IconButton(
+                onClick = { onRatingChanged(i.toFloat()) },
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Rate $i stars",
+                    tint = if (currentRating != null && i <= currentRating) Color.Yellow else Color.Gray
+                )
+            }
+        }
+    }
+
+}
+
+
+@Composable
+private fun RatingSummary(rating: MovieRating?) {
+    val averageRating = rating?.userRating?.values?.average()
+    val ratingCount = rating?.userRating?.size
+
+
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Card(modifier = Modifier.padding(10.dp).shadow(elevation = 16.dp) ,
+            shape = RoundedCornerShape(defaultPadding),
+
+
+        ) {
+            Column(modifier = Modifier.padding(defaultPadding)) {
+
+        Text(
+            text = "Average Rating",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+
+        Text(
+            text = "%.1f".format(averageRating?.times(2)),
+            style = MaterialTheme.typography.displaySmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+
+        Text(
+            text = "Based on $ratingCount ratings",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+        }
+        }
 }

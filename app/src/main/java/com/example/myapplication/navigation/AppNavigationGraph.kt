@@ -23,6 +23,7 @@ import androidx.navigation.navArgument
 import com.example.myapplication.ui.TopAppBar
 import com.example.myapplication.ui.auth.presentaiton.authentication.signin.SignInScreen
 import com.example.myapplication.ui.auth.presentaiton.authentication.signup.SignUpScreen
+import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.UpdateUserDetailScreen
 import com.example.myapplication.ui.detail.MovieDetailScreen
 import com.example.myapplication.ui.home.HomeScreen
 import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.DiscoverMoviesScreen
@@ -260,11 +261,25 @@ fun LunchMovieApp(
             exitTransition = { NavAnimations.slideOutToLeft() } ){
 
             UserDetailScreen(
-                onBackClick = { navController.navigateUp() },
-                onLogoutSuccess = { navController.navigate(AppScreen.SignInScreen().route)}
-            )
-        }
+              onBackClick = { navController.navigateUp() },
+              onLogoutSuccess = { navController.navigate(AppScreen.SignInScreen().route) },
+              navToUpdate = {
+                 navController.navigate(AppScreen.UpdateUserDetailScreen().route)
+              }
 
+            )
+      }
+composable(
+   AppScreen.UpdateUserDetailScreen().route,
+   enterTransition = { NavAnimations.slideInFromRight() },
+   exitTransition = { NavAnimations.slideOutToLeft() }
+){
+    UpdateUserDetailScreen(
+        onBackClick = { navController.navigateUp() },
+        onLogoutSuccess = {navController.navigate(AppScreen.SignInScreen().route)},
+
+)
+}
 
 
 

@@ -1,6 +1,6 @@
 package com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.component
 
-import android.R.attr.onClick
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,20 +34,19 @@ import com.example.myapplication.auth.domain.entities.User
 
 
 @Composable
-fun UserDetailContent(
+fun UpdateUserDetailContent(
     user: User?,
     isLoading: Boolean,
     error: String?,
+    onUpdateUser: (User) -> Unit,
+    onBackClick: () -> Unit,
     onRetry: () -> Unit,
     enableTextField: Boolean,
     buttonString: String,
     modifier: Modifier ,
-    onLogOutClick:()-> Unit ,
-    onBackClick: () -> Unit,
-    onUpdateUser:(User) -> Unit
+    onLogOutClick:()-> Unit
 
-
-    ) {
+) {
     var name by remember { mutableStateOf(user?.fullName ?: "") }
     var email by remember { mutableStateOf(user?.email ?: "") }
 
@@ -129,13 +128,17 @@ fun UserDetailContent(
         Spacer(modifier = Modifier.padding())
 
         Button(
-           onClick = {
-                   val updatedUser = user.copy(
-                       fullName = name ,
-                       email = email
-                   )
-                   onUpdateUser(updatedUser)
-           } ,
+            onClick =
+                {
+                    val updatedUser = user?.copy(
+                        fullName = name,
+                        email = email
+                    )
+                    onUpdateUser(updatedUser!!)
+                },
+
+
+
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
