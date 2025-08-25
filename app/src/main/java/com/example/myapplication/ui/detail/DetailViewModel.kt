@@ -24,7 +24,7 @@ import androidx.lifecycle.viewModelScope
 class DetailViewModel @Inject constructor(
     private val repository: MovieDetailRepository,
     savedstateHandle: SavedStateHandle,
-    private val userRepository: SaveListRepo ,
+    private val userRepository: SaveListRepo,
     private val rateRepository: MovieRatingRepository
 
 
@@ -50,46 +50,31 @@ class DetailViewModel @Inject constructor(
 
 
 
-
-    fun addToWatched(labelName: String, movieName: String, realiseDate: String) {
+    fun addWatch(labelName: String, movieId: Int = id) {
         viewModelScope.launch {
             _userState.value = WatchLaterUiState.Loading
             try {
-                userRepository.addToWatch(
+                userRepository.addWatch(
                     labelName = labelName,
-                    movieName = movieName,
-                    realiseDate=realiseDate)
-                _userState.value = WatchLaterUiState.Success("Added to watch later")
+                    movieId = movieId
+                )
+                _userState.value = WatchLaterUiState.Success("Added to Watch Later")
             } catch (e: Exception) {
-                Log.e("DetailViewModel", "Error adding to watch later: ${e.message}")
-                _userState.value =
-                    WatchLaterUiState.Error("Failed to add'$movieName' to watch later . please try again ")
-            }
-        }
-    }
-    fun addToWatchLater(labelName: String, movieName: String, realiseDate: String) {
-        viewModelScope.launch {
-            _usersState.value = WatchLaterUiState.Loading
-            try {
-                userRepository.addToWatch(
-                    labelName = labelName,
-                    movieName = movieName,
-                    realiseDate=realiseDate)
-                _usersState.value = WatchLaterUiState.Success("Added to watch later")
-            } catch (e: Exception) {
-                Log.e("DetailViewModel", "Error adding to watch later: ${e.message}")
-                _userState.value =
-                    WatchLaterUiState.Error("Failed to add'$movieName' to watch later . please try again ")
+                Log.e("DetailViewModel", "Error adding to watch later :${e.message}")
             }
         }
     }
 
+
     val id: Int = savedstateHandle.get<Int>(K.MOVIE_ID) ?: -1
+
     init {
         fetchMovieDetailById()
         loadMovieData()
     }
-     fun fetchMovieDetailById() = viewModelScope.launch {
+
+
+    fun fetchMovieDetailById() = viewModelScope.launch {
         if (id == -1) {
             _detailState.update {
                 it.copy(
@@ -127,6 +112,7 @@ class DetailViewModel @Inject constructor(
 
         }
     }
+
     fun fetchMovie() = viewModelScope.launch {
         repository.fetchMovie().collectAndHandle(
             onError = { error ->
@@ -156,11 +142,11 @@ class DetailViewModel @Inject constructor(
 
 
     }
-    fun resetState(){
+
+    fun resetState() {
         _userState.value = WatchLaterUiState.Idle
         _usersState.value = WatchLaterUiState.Idle
     }
-
 
     fun loadMovieData() {
         viewModelScope.launch {
@@ -171,18 +157,19 @@ class DetailViewModel @Inject constructor(
                 _userReview.value = rateRepository.getUserReview(id)
                 _ratingState.value = MovieRatingUiState.Success(rating)
             } catch (e: Exception) {
-                _ratingState.value = MovieRatingUiState.Error(e.message ?: "Failed to load movie data")
+                _ratingState.value =
+                    MovieRatingUiState.Error(e.message ?: "Failed to load movie data")
             }
         }
     }
 
-fun rateMovie(rating: Float) {
+    fun rateMovie(rating: Float) {
 
         viewModelScope.launch {
             try {
                 rateRepository.rateMovie(id, rating)
                 _userRating.value = rating
-            //    loadMovieData() // Refresh data
+                //    loadMovieData() // Refresh data
             } catch (e: Exception) {
                 _ratingState.value = MovieRatingUiState.Error(e.message ?: "Failed to rate movie")
             }
@@ -190,23 +177,18 @@ fun rateMovie(rating: Float) {
     }
 
     fun submitReview(review: String) {
-            viewModelScope.launch {
-                try {
-                    rateRepository.addMovieReview(id, review)
-                    _userReview.value = review
-                    loadMovieData() // Refresh data
-                } catch (e: Exception) {
-                    _ratingState.value = MovieRatingUiState.Error(e.message ?: "Failed to submit review")
-                }
+        viewModelScope.launch {
+            try {
+                rateRepository.addMovieReview(id, review)
+                _userReview.value = review
+                loadMovieData() // Refresh data
+            } catch (e: Exception) {
+                _ratingState.value =
+                    MovieRatingUiState.Error(e.message ?: "Failed to submit review")
             }
         }
     }
-
-
-
-
-
-
+}
 
 
 data class DetailState(

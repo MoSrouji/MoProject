@@ -18,12 +18,13 @@ import androidx.compose.ui.text.style.TextOverflow
 
 fun TopAppBar(
     onSearchClick:() -> Unit ,
-    onUserButtonClick:() -> Unit
+    onUserButtonClick:() -> Unit ,
+    onMenuClick:()-> Unit
 ) {
             TopAppBar(
                 title = { Text("Bat-Rate", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(onClick = onMenuClick) {
                         Icon(
                             imageVector = Icons.Filled.Menu,
                             contentDescription = "Localized description",

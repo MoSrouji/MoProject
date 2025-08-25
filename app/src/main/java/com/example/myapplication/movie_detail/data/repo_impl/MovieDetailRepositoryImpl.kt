@@ -21,6 +21,7 @@ class MovieDetailRepositoryImpl(
     override fun fetchMovieDetail(movieId: Int): Flow<Response<MovieDetail>> = flow {
         emit(Response.Loading())
         val movieDetailDto = movieDetailApiService.fetchMovieDetail(movieId = movieId)
+
         apiDetailMapper.mapToDomain(movieDetailDto).apply {
             emit(Response.Success(this))
         }

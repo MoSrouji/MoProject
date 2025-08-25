@@ -1,5 +1,6 @@
 package com.example.myapplication.save_list.data.repository_impl
 
+import android.util.Log
 import com.example.myapplication.auth.network.NetworkConstant
 import com.example.myapplication.save_list.domain.repository.SaveListRepo
 import com.google.firebase.auth.FirebaseAuth
@@ -10,7 +11,12 @@ import javax.inject.Inject
 
 class SaveListRepoImpl @Inject constructor(
     private val db: FirebaseFirestore,
+
 ) : SaveListRepo {
+
+
+
+
     override suspend fun addToWatch(
         labelName: String,
         movieName: String,
@@ -32,6 +38,27 @@ class SaveListRepoImpl @Inject constructor(
 
 
     }
+
+
+    override suspend fun addWatch(
+        labelName: String,
+        movieId: Int
+    ) {
+        try {
+            val updates = hashMapOf<String, Any>(
+                labelName to FieldValue.arrayUnion(movieId)
+            )
+            db.collection(NetworkConstant.COLLECTION_NAME_USERS)
+                .document(FirebaseAuth.getInstance().uid!!)
+                .update(updates)
+                .await()
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+
+
 
     override suspend fun searchHistory(searchMovie: String, labelName: String) {
         try {
@@ -63,6 +90,21 @@ class SaveListRepoImpl @Inject constructor(
             throw Exception("Failed to get search history: ${e.message}")
         }
     }
+
+    override suspend fun getSavedMovies(labelName: String): List<Int> {
+        return try {
+            val userId = FirebaseAuth.getInstance().uid ?: return emptyList()
+            val snapshot = db.collection(NetworkConstant.COLLECTION_NAME_USERS)
+                .document(userId)
+                .get()
+                .await()
+
+            snapshot.get(labelName) as? List<Int> ?: emptyList()
+        } catch (e: Exception) {
+            throw Exception("Failed to get Saved Movies: ${e.message}")
+        }
+    }
+
 
     // To clear search history
     override suspend fun clearSearchHistory(labelName: String) {

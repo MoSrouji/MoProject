@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -30,6 +31,7 @@ import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.DiscoverMovi
 import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.TrendingMoviesScreen
 import com.example.myapplication.ui.search.SearchScreen
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.UserDetailScreen
+import com.example.myapplication.ui.saved_movies.SavedMoviesScreen
 import com.example.myapplication.utils.K
 import com.google.firebase.auth.FirebaseAuth
 
@@ -88,6 +90,9 @@ fun LunchMovieApp(
                 }
             )
         }
+
+
+
         composable(
             AppScreen.SignUpScreen().route,
             enterTransition = { NavAnimations.slideInFromRight() },
@@ -116,11 +121,15 @@ fun LunchMovieApp(
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(onSearchClick = {
-                        navController.navigate(AppScreen.SearchScreen().route)
-                    },
+                    TopAppBar(
+                        onSearchClick = {
+                            navController.navigate(AppScreen.SearchScreen().route)
+                        },
                         onUserButtonClick = {
                             navController.navigate(AppScreen.UserDetailScreen().route)
+                        },
+                        onMenuClick = {
+                            navController.navigate(AppScreen.SavedMoviesScreen().route)
                         }
                     )
                 }
@@ -162,12 +171,15 @@ fun LunchMovieApp(
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(onSearchClick = {
-                        navController.navigate(AppScreen.SearchScreen().route)
-                    },
+                    TopAppBar(
+                        onSearchClick = {
+                            navController.navigate(AppScreen.SearchScreen().route)
+                        },
                         onUserButtonClick = {
                             navController.navigate(AppScreen.UserDetailScreen().route)
-                        })
+                        },
+                        onMenuClick = {}
+                    )
                 }
             ) {
                 DiscoverMoviesScreen(
@@ -184,6 +196,9 @@ fun LunchMovieApp(
                 )
             }
         }
+
+
+
         // Trending Movies Screen Nav
         composable(
             AppScreen.TrendingMovieScreen().route,
@@ -192,12 +207,15 @@ fun LunchMovieApp(
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(onSearchClick = {
-                        navController.navigate(AppScreen.SearchScreen().route)
-                    },
+                    TopAppBar(
+                        onSearchClick = {
+                            navController.navigate(AppScreen.SearchScreen().route)
+                        },
                         onUserButtonClick = {
                             navController.navigate(AppScreen.UserDetailScreen().route)
-                        })
+                        },
+                        onMenuClick = {}
+                    )
                 }
             ) {
                 TrendingMoviesScreen(
@@ -216,6 +234,8 @@ fun LunchMovieApp(
             }
         }
 
+
+
         // Film Screen Nav
         composable(
             AppScreen.MovieDetailScreen().routeWithArgs,
@@ -227,11 +247,14 @@ fun LunchMovieApp(
         ) {
             Scaffold(
                 topBar = {
-                    TopAppBar(onSearchClick = {
+                    TopAppBar(
+                        onSearchClick = {
                         navController.navigate(AppScreen.SearchScreen().route)
-                    },onUserButtonClick = {
+                    }, onUserButtonClick = {
                         navController.navigate(AppScreen.UserDetailScreen().route)
-                    })
+                    },
+                        onMenuClick = {}
+                    )
                 }
             ) {
                 MovieDetailScreen(
@@ -255,6 +278,8 @@ fun LunchMovieApp(
             }
         }
 
+
+
         composable(
             AppScreen.UserDetailScreen().route,
             enterTransition = { NavAnimations.slideInFromRight() },
@@ -269,7 +294,9 @@ fun LunchMovieApp(
 
             )
       }
-composable(
+
+
+        composable(
    AppScreen.UpdateUserDetailScreen().route,
    enterTransition = { NavAnimations.slideInFromRight() },
    exitTransition = { NavAnimations.slideOutToLeft() }
@@ -282,12 +309,12 @@ composable(
 }
 
 
-
         composable(
             AppScreen.SearchScreen().route,
             enterTransition = { NavAnimations.slideInFromRight() },
             exitTransition = { NavAnimations.slideOutToLeft() }
         ) {
+
 
             SearchScreen(
                 onMovieClick = {
@@ -302,6 +329,39 @@ composable(
                 onNavigateUP = { navController.navigateUp() }
             )
         }
+
+        composable (
+            AppScreen.SavedMoviesScreen().route ,
+            enterTransition = { NavAnimations.slideInFromRight()} ,
+            exitTransition = { NavAnimations.slideOutToLeft()}
+        ) {
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        onSearchClick = {
+                            navController.navigate(AppScreen.SearchScreen().route)
+                        }, onUserButtonClick = {
+                            navController.navigate(AppScreen.UserDetailScreen().route)
+                        },
+                        onMenuClick = {})
+                }
+            ) {
+
+                SavedMoviesScreen(
+                    modifier = Modifier.padding(top = 200.dp),
+                    onMovieClick = {
+                        navController.navigate(
+                            AppScreen.MovieDetailScreen().getRouteWithArgs(it)
+
+                        )
+                    }
+                )
+
+
+            }
+        }
+
+
     }
 }
 

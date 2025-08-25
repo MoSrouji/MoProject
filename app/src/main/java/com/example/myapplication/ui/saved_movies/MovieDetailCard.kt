@@ -1,4 +1,5 @@
-package com.example.myapplication.ui.moviesScreenDiscoverAndTrending
+package com.example.myapplication.ui.saved_movies
+
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,17 +40,16 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myapplication.R
 import com.example.myapplication.movie.domain.models.Movie
+import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.ui.home.components.MovieCard
 import com.example.myapplication.ui.home.itemSpacing
 import com.example.myapplication.utils.K
 
 @Composable
-fun MovieCardShow(
+fun MovieDetailCard(
     modifier: Modifier = Modifier,
-    movie: Movie,
-    onMovieClick: (Int) -> Unit,
-    onSavedClick:()-> Unit
-
+    movie: MovieDetail,
+    onMovieClick: (Int) -> Unit
 
 ) {
     val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -81,10 +81,7 @@ fun MovieCardShow(
                     Icon(
                         imageVector = Icons.Default.BookmarkAdd,
                         contentDescription = "Bookmark",
-                        modifier = Modifier.padding(4.dp).clickable(
-                            onClick = onSavedClick
-                        ) ,
-
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
             }
@@ -148,7 +145,7 @@ fun MovieCardShow(
                     modifier = modifier
                         .padding(2.dp)
                         .shadow(elevation = 4.dp),
-                    shape = RoundedCornerShape(corner = MaterialTheme.shapes.small.topStart) , 
+                    shape = RoundedCornerShape(corner = MaterialTheme.shapes.small.topStart) ,
                     onClick = { }
                 ) {
                     Text(
@@ -187,32 +184,32 @@ fun MovieCardShow(
 
                             )
                         }}
-                        Spacer(modifier = modifier.padding(itemSpacing))
-                        Card(onClick = {}, modifier = modifier) {
-                            Row(
-                                modifier = modifier,
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.RemoveRedEye,
-                                    contentDescription = "Rating",
-                                    modifier = modifier.padding((4.dp))
-                                        .size(20.dp)
+                    Spacer(modifier = modifier.padding(itemSpacing))
+                    Card(onClick = {}, modifier = modifier) {
+                        Row(
+                            modifier = modifier,
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.RemoveRedEye,
+                                contentDescription = "Rating",
+                                modifier = modifier.padding((4.dp))
+                                    .size(20.dp)
 
-                                )
-                                Text(
-                                    text = "Mark as watched",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = Color.Blue.copy(alpha = .5f),
-                                    fontWeight = FontWeight.Bold,
-                                )
-                            }
+                            )
+                            Text(
+                                text = "Mark as watched",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.Blue.copy(alpha = .5f),
+                                fontWeight = FontWeight.Bold,
+                            )
                         }
                     }
                 }
             }
         }
+    }
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = 16.dp),
         thickness = 1.dp,

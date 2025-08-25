@@ -82,6 +82,7 @@ fun TrendingMoviesScreen(
                         MovieCardShow(
                             movie = it,
                             onMovieClick = onMovieClick,
+                            onSavedClick = {}
                         )
                     }
                 }

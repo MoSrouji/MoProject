@@ -10,7 +10,7 @@ sealed class AppScreen() {
     data class SearchScreen(val route: String = ConstantAppScreen.SEARCH_SCREEN.name) : AppScreen()
     data class UserDetailScreen(val route: String = ConstantAppScreen.USER_DETAIL_SCREEN.name) : AppScreen()
     data class UpdateUserDetailScreen(val route: String = ConstantAppScreen.UPDATE_USER_DETAIL_SCREEN.name) : AppScreen()
-
+    data class SavedMoviesScreen(val route :String= ConstantAppScreen.SAVED_MOVIES.name): AppScreen()
     data class DiscoverMovieScreen(val route: String = ConstantAppScreen.DISCOVER_MOVIE_SCREEN.name) :
         AppScreen()
 

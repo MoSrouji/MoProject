@@ -48,15 +48,10 @@ fun MovieDetailScreen(
 
 
     val ratingState by movieDetailViewModel.ratingState.collectAsState()
-    val rateState by movieDetailViewModel.ratingState.collectAsState()
     val userRating by movieDetailViewModel.userRating.collectAsState()
-
     val userReview by movieDetailViewModel.userReview.collectAsStateWithLifecycle()
-
-
     val saveToWatchLaterLabel: String = "saveToWatchLater"
     val saveToWatchedLabel: String = "saveToWatched"
-
     val context = LocalContext.current
 
 
@@ -148,10 +143,8 @@ fun MovieDetailScreen(
                         onBookMarkClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
-                                movieDetailViewModel.addToWatchLater(
+                                movieDetailViewModel.addWatch(
                                     labelName = saveToWatchLaterLabel,
-                                    movieName = state.movieDetail.title,
-                                    realiseDate = state.movieDetail.releaseDate
                                 )
                             } else {
                                 Toast.makeText(
@@ -164,10 +157,8 @@ fun MovieDetailScreen(
                         onWatchedClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
-                                movieDetailViewModel.addToWatched(
+                                movieDetailViewModel.addWatch(
                                     labelName = saveToWatchedLabel,
-                                    movieName = state.movieDetail.title,
-                                    realiseDate = state.movieDetail.releaseDate
                                 )
                             } else {
                                 Toast.makeText(

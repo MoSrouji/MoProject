@@ -129,6 +129,7 @@ fun SearchScreen(
                         MovieCardShow(
                             movie = it,
                             onMovieClick = onMovieClick,
+                            onSavedClick = {},
                         )
                     }
                 }
